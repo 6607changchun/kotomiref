@@ -135,7 +135,17 @@ function createTables(db){
 
 function init_db(){
     const { app } = require("electron")
-    const db_path = path.join(app.getPath("userData"), "kotomiref.db")
+
+    // Determine database location based on environment
+    let db_path
+    if (app.isPackaged) {
+        // Production: use userData directory
+        db_path = path.join(app.getPath("userData"), "kotomiref.db")
+    } else {
+        // Development: use project root directory
+        db_path = path.join(__dirname, "../../kotomiref.db")
+    }
+
     const is_new = !fs.existsSync(db_path)
 
     const db = require("better-sqlite3")(db_path)
